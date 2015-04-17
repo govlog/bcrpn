@@ -7,7 +7,7 @@ import time
 import readline
 import rpn as rp
 
-ver = '0.1'
+ver = '1.0'
 
 commands = ( 'quit' , 'debug' , 'version' , 'help' , 'show' )
 
@@ -51,7 +51,8 @@ print "Welcome to calc",ver,"use help for command list or quit to exit."
 
 var={}
 
-t=0
+#t=0
+
 while 1:
     
     try:
@@ -66,19 +67,46 @@ while 1:
         go=False
         cmd=''
 
-        for i,c in enumerate(list(user_input)):
+        input_arr=list(user_input.rstrip(' ').lstrip(' '))
+        input_len=len(input_arr)
+
+        pos=0
+
+        loop=False
+        loop_iter=0
+        iter_num=0
+
+        while (pos!=input_len):
+
+            if loop==True:
+                print "loop iter => ",loop_iter,'/',iter_num,pos
+                loop_iter+=1
+
+            if loop==True and (loop_iter == iter_num):
+                sys.exit(1)
+
+            if loop and pos==input_len-1:
+                pos=loop_pos
+
+            c=input_arr[pos]
 
             if c != ';':
+
+
                 cmd+=c
-            else:
-                go=True
 
-            if i==len(user_input)-1:
-                go=True
+            if (c == ';') or (pos==input_len-1):
 
-            if go:
+                print cmd
 
-                if cmd in commands:
+                if 'for' in cmd and loop == False:
+                    (_tmp,iter_num)=cmd.split(' ')
+                    print 'loop detected , iterations : ',iter_num
+                    loop=True
+                    loop_pos=pos
+                    loop_iter=0
+
+                elif cmd in commands:
                     cmd_parse(cmd)
 
                 elif '=' in cmd:
@@ -97,16 +125,20 @@ while 1:
 
                     expr=rp.Infix(cmd,var,debug)
 
-                    if expr.evaluate():
+                    if expr.get_result():
                         e = time.time()
 
                         if debug:
                             print "(time)   "+ '{0:.11f}'.format(e - t)+ "s"
-                            print "(result)",expr.get_result()
+                            print "(result)",expr.result
                         else:
                             print expr.result
+                go = False
+                cmd = ''
 
-                go=False
-                cmd=''
+            pos += 1
+
+            if loop and pos==input_len-1:
+                pos=loop_pos
 
 print
