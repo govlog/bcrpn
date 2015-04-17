@@ -272,8 +272,8 @@ class Infix(object):
                     return False
 
             elif t in Infix.func:
+                a = float(stack.pop())
                 if t == 'sin':
-                    a = float(stack.pop())
                     stack.append(math.sin(a))
                 elif t == 'cos':
                     stack.append(math.cos(a))
