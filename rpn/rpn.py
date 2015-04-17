@@ -27,11 +27,9 @@ class Infix(object):
 
     logic = { '&' , '|' , '!' , ''}
 
-    func = {
-        'sin': (5, LEFT_ASSOC),
-        'cos': (5, LEFT_ASSOC)
-    }
-
+    func = {'sin' : (5, LEFT_ASSOC),
+            'cos' : (5, LEFT_ASSOC),
+            'acos': (5, LEFT_ASSOC)}
 
     def __init__(self, infix_expr, variables, debug=False):
         __sanitize = infix_expr.strip(' \t\n\r').replace(' ', '')

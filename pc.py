@@ -9,7 +9,7 @@ import rpn as rp
 
 ver = '0.1'
 
-commands = ( 'quit' , 'debug' , 'version' , 'scale' , 'help' , 'show' )
+commands = ( 'quit' , 'debug' , 'version' , 'help' , 'show' )
 
 debug=True
 
