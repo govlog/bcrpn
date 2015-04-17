@@ -266,8 +266,6 @@ class Infix(object):
                         stack.append(a & b)
                     if t == '|':
                         stack.append(a | b)
-                    # if t == '!':
-                    #                        stack.append(a ! b)
                 else:
                     self.__debug('(error) must use integer for bitwise')
                     return False
