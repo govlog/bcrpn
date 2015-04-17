@@ -64,7 +64,6 @@ while 1:
 
     if user_input:
 
-        go=False
         cmd=''
 
         input_arr=list(user_input.rstrip(' ').lstrip(' '))
@@ -78,30 +77,17 @@ while 1:
 
         while (pos!=input_len):
 
-            if loop==True:
-                print "loop iter => ",loop_iter,'/',iter_num,pos
-                loop_iter+=1
-
-            if loop==True and (loop_iter == iter_num):
-                sys.exit(1)
-
-            if loop and pos==input_len-1:
-                pos=loop_pos
-
             c=input_arr[pos]
 
             if c != ';':
 
-
                 cmd+=c
 
-            if (c == ';') or (pos==input_len-1):
+            if c == ';' or (pos==input_len-1):
 
-                print cmd
-
-                if 'for' in cmd and loop == False:
+                if ('for' in cmd) and loop==False:
                     (_tmp,iter_num)=cmd.split(' ')
-                    print 'loop detected , iterations : ',iter_num
+                    iter_num=int(iter_num)
                     loop=True
                     loop_pos=pos
                     loop_iter=0
@@ -114,8 +100,8 @@ while 1:
                     (v,expr)=cmd.split("=")
                     expr=rp.Infix(expr,var,debug)
 
-                    if expr.evaluate():
-                        var[v]=expr.get_result()
+                    if expr.get_result():
+                        var[v]=expr.result
                         if debug:
                             print v, "<=", var[v]
 
@@ -133,12 +119,18 @@ while 1:
                             print "(result)",expr.result
                         else:
                             print expr.result
-                go = False
                 cmd = ''
 
-            pos += 1
+            if loop == True:
 
-            if loop and pos==input_len-1:
-                pos=loop_pos
+                if pos == input_len - 1:
+                    pos=loop_pos
+                    loop_iter += 1
+                    cmd=''
+
+                if loop_iter >= iter_num:
+                    break
+
+            pos+=1
 
 print
