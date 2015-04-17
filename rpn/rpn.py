@@ -2,9 +2,10 @@
 
 import math
 
+
 class Infix(object):
     """Class to convert from INFIX notation to RPN notation with a RPN parser
-       Include variables, bitwises operator and some trig functions"""
+       Include variables, bitwise operator and some trig functions"""
 
     LEFT_ASSOC = 0
     RIGHT_ASSOC = 1
@@ -20,15 +21,15 @@ class Infix(object):
                 '(': (0, OTHER),
                 '&': (0, OTHER)}
 
-    valid_ops = { '+' , '-' , '/' , '*' , '%', '^' , '&' , '|' , '!' }
+    valid_ops = {'+', '-', '/', '*', '%', '^', '&', '|', '!'}
 
     paren = {'(': 1,
              ')': 1}
 
-    logic = { '&' , '|' , '!' , ''}
+    logic = {'&', '|', '!', ''}
 
-    func = {'sin' : (5, LEFT_ASSOC),
-            'cos' : (5, LEFT_ASSOC),
+    func = {'sin': (5, LEFT_ASSOC),
+            'cos': (5, LEFT_ASSOC),
             'acos': (5, LEFT_ASSOC)}
 
     def __init__(self, infix_expr, variables, debug=False):
@@ -109,7 +110,7 @@ class Infix(object):
 
 
     @staticmethod
-    def is_assoc(o1,direction):
+    def is_assoc(o1, direction):
         if Infix.op_order[o1][1] == direction:
             return True
         else:
@@ -122,7 +123,7 @@ class Infix(object):
         word = ''
         last = ''
 
-        par_count = {'(': 0, ')': 0 }
+        par_count = {'(': 0, ')': 0}
 
         for i, c in enumerate(self.infix):
 
@@ -146,7 +147,7 @@ class Infix(object):
                 num = ''
                 word = ''
 
-                if i < len(self.infix)-1 or c == ')':
+                if i < len(self.infix) - 1 or c == ')':
                     self.token_list.append(c)
                 else:
                     self.__error("(error) last char can't be an operator")
@@ -183,8 +184,8 @@ class Infix(object):
             elif t in Infix.valid_ops:
 
                 while stack:
-                    if self.is_assoc(t,self.LEFT_ASSOC) and Infix.op_order[t] <= Infix.op_order[stack[-1]] \
-                            or self.is_assoc(t,self.RIGHT_ASSOC) and Infix.op_order[t] < Infix.op_order[stack[-1]]:
+                    if self.is_assoc(t, self.LEFT_ASSOC) and Infix.op_order[t] <= Infix.op_order[stack[-1]] \
+                            or self.is_assoc(t, self.RIGHT_ASSOC) and Infix.op_order[t] < Infix.op_order[stack[-1]]:
                         self.rpn.append(stack.pop())
                     else:
                         break
@@ -231,7 +232,6 @@ class Infix(object):
                         stack.append(a * b)
                     elif t == '/':
                         if not a or not b:
-                            raise ZeroDivisionError
                             self.__error('(error)  division by zero!')
                             return False
                         else:
@@ -249,7 +249,7 @@ class Infix(object):
                             if self.__is_int(b):
                                 stack.append(a ** b)
                             else:
-                                self.__debug('(error) exponent must be an integer' )
+                                self.__debug('(error) exponent must be an integer')
                                 return False
 
                 else:
@@ -260,21 +260,21 @@ class Infix(object):
                 a = stack.pop()
                 b = stack.pop()
                 if self.__is_int(a) and self.__is_int(b):
-                    a=int(a)
-                    b=int(b)
+                    a = int(a)
+                    b = int(b)
                     if t == '&':
                         stack.append(a & b)
                     if t == '|':
                         stack.append(a | b)
-#                    if t == '!':
-#                        stack.append(a ! b)
+                    # if t == '!':
+                    #                        stack.append(a ! b)
                 else:
-                    self.__debug('(error) must use integer for bitwise' )
+                    self.__debug('(error) must use integer for bitwise')
                     return False
 
             elif t in Infix.func:
+                a = float(stack.pop())
                 if t == 'sin':
-                    a = float(stack.pop())
                     stack.append(math.sin(a))
                 elif t == 'cos':
                     stack.append(math.cos(a))
@@ -291,8 +291,16 @@ class Infix(object):
 
 
     def evaluate(self):
-        """This method evaluate, convertuser input INFIX to POSTFIX, then to RPN and compute RPN output stack"""
+        """This method evaluate, convert user input INFIX to POSTFIX, then to RPN and compute RPN output stack"""
         if self.to_tokens() and self.to_rpn() and self.to_result():
             return True
         else:
             return False
+
+
+    def get_result(self):
+        """This method return the computed result"""
+        if self.evaluate():
+            return self.result
+        else:
+            return 0

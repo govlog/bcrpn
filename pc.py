@@ -7,7 +7,7 @@ import time
 import readline
 import rpn as rp
 
-ver = '0.1'
+ver = '1.0'
 
 commands = ( 'quit' , 'debug' , 'version' , 'help' , 'show' )
 
@@ -33,26 +33,26 @@ def cmd_parse(command):
 
     elif command == 'debug' or command == '!d':
         debug=not debug
-        print "debug now set to",debug
+        print "debug is now set to",debug
 
     elif command == 'show':
         print var
 
     elif command == 'help' or command == '!h':
-        print "show    : show variables"
         print "debug   : toggle debug on/off"
+        print "show    : show variables"
         print "quit    : exit calc"
-        print "help    : show this help"
         print "version : show version number"
 
     elif command == 'version' or command == '!v':
         print "calc version",ver
 
-print "Welcome to calc",ver,"!q to quit , !h for command help."
+print "Welcome to calc",ver,"use help for command list or quit to exit."
 
 var={}
 
-t=0
+#t=0
+
 while 1:
     
     try:
@@ -64,22 +64,35 @@ while 1:
 
     if user_input:
 
-        go=False
         cmd=''
 
-        for i,c in enumerate(list(user_input)):
+        input_arr=list(user_input.rstrip(' ').lstrip(' '))
+        input_len=len(input_arr)
+
+        pos=0
+
+        loop=False
+        loop_iter=0
+        iter_num=0
+
+        while (pos!=input_len):
+
+            c=input_arr[pos]
 
             if c != ';':
+
                 cmd+=c
-            else:
-                go=True
 
-            if i==len(user_input)-1:
-                go=True
+            if c == ';' or (pos==input_len-1):
 
-            if go:
+                if ('for' in cmd) and loop==False:
+                    (_tmp,iter_num)=cmd.split(' ')
+                    iter_num=int(iter_num)
+                    loop=True
+                    loop_pos=pos
+                    loop_iter=0
 
-                if cmd in commands:
+                elif cmd in commands:
                     cmd_parse(cmd)
 
                 elif '=' in cmd:
@@ -87,7 +100,7 @@ while 1:
                     (v,expr)=cmd.split("=")
                     expr=rp.Infix(expr,var,debug)
 
-                    if expr.evaluate():
+                    if expr.get_result():
                         var[v]=expr.result
                         if debug:
                             print v, "<=", var[v]
@@ -98,7 +111,7 @@ while 1:
 
                     expr=rp.Infix(cmd,var,debug)
 
-                    if expr.evaluate():
+                    if expr.get_result():
                         e = time.time()
 
                         if debug:
@@ -106,8 +119,18 @@ while 1:
                             print "(result)",expr.result
                         else:
                             print expr.result
+                cmd = ''
 
-                go=False
-                cmd=''
+            if loop == True:
+
+                if pos == input_len - 1:
+                    pos=loop_pos
+                    loop_iter += 1
+                    cmd=''
+
+                if loop_iter >= iter_num:
+                    break
+
+            pos+=1
 
 print
