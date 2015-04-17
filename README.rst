@@ -1,8 +1,9 @@
 bcrpn
-=====
+-----
 
+bcrpn is a bc like python script with a class that :
 
-Description
------------
-
-bcrpn is a bc like python script using an advanced rpn class I made for fun and learning.
+  * sanitize user INFIX
+  * convert INFIX to POSTFIX
+  * convert POSTFIX to RPN
+  * compute RPN output stack
