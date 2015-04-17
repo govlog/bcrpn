@@ -231,7 +231,6 @@ class Infix(object):
                         stack.append(a * b)
                     elif t == '/':
                         if not a or not b:
-                            raise ZeroDivisionError
                             self.__error('(error)  division by zero!')
                             return False
                         else:
@@ -296,3 +295,11 @@ class Infix(object):
             return True
         else:
             return False
+
+
+    def get_result(self):
+        """This method return the computed result"""
+        if self.evaluate():
+            return self.result
+        else:
+            return 0

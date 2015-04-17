@@ -87,7 +87,7 @@ while 1:
                     expr=rp.Infix(expr,var,debug)
 
                     if expr.evaluate():
-                        var[v]=expr.result
+                        var[v]=expr.get_result()
                         if debug:
                             print v, "<=", var[v]
 
@@ -102,7 +102,7 @@ while 1:
 
                         if debug:
                             print "(time)   "+ '{0:.11f}'.format(e - t)+ "s"
-                            print "(result)",expr.result
+                            print "(result)",expr.get_result()
                         else:
                             print expr.result
 
