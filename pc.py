@@ -33,22 +33,21 @@ def cmd_parse(command):
 
     elif command == 'debug' or command == '!d':
         debug=not debug
-        print "debug now set to",debug
+        print "debug is now set to",debug
 
     elif command == 'show':
         print var
 
     elif command == 'help' or command == '!h':
-        print "show    : show variables"
         print "debug   : toggle debug on/off"
+        print "show    : show variables"
         print "quit    : exit calc"
-        print "help    : show this help"
         print "version : show version number"
 
     elif command == 'version' or command == '!v':
         print "calc version",ver
 
-print "Welcome to calc",ver,"!q to quit , !h for command help."
+print "Welcome to calc",ver,"use help for command list or quit to exit."
 
 var={}
 
