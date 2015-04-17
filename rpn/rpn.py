@@ -3,6 +3,8 @@
 import math
 
 class Infix(object):
+    """Class to convert from INFIX notation to RPN notation with a RPN parser
+       Include variables, bitwises operator and some trig functions"""
 
     LEFT_ASSOC = 0
     RIGHT_ASSOC = 1
@@ -117,6 +119,7 @@ class Infix(object):
 
 
     def to_tokens(self):
+        """This method convert the sanitized self input into an array of token"""
         num = ''
         word = ''
         last = ''
@@ -169,6 +172,7 @@ class Infix(object):
 
 
     def to_rpn(self):
+        """This method convert an array of tokens to a RPN output stack"""
         stack = []
         for t in self.token_list:
 
@@ -214,6 +218,7 @@ class Infix(object):
 
 
     def to_result(self):
+        """This method parse/compute the RPN stack and store result in self.result"""
         stack = []
 
         for t in self.rpn:
@@ -288,6 +293,7 @@ class Infix(object):
 
 
     def evaluate(self):
+        """This method evaluate, convertuser input INFIX to POSTFIX, then to RPN and compute RPN output stack"""
         if self.to_tokens() and self.to_rpn() and self.to_result():
             return True
         else:
