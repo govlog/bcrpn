@@ -12,7 +12,7 @@ ver = '1.0'
 commands = ( 'quit', 'debug', 'version', 'help', 'show' )
 
 debug = True
-
+SCALE_DEFAULT = 100000
 
 def completer(text, state):
     options = [x for x in commands if x.startswith(text) and x != text]
@@ -50,6 +50,7 @@ def cmd_parse(command):
 
 
 print "Welcome to calc", ver, "use help for command list or quit to exit."
+print "Scale is set to",SCALE_DEFAULT
 
 var = {}
 
@@ -99,7 +100,7 @@ while 1:
                 elif '=' in cmd:
 
                     (v, expr) = cmd.split("=")
-                    expr = rp.Infix(expr, var, debug)
+                    expr = rp.Infix(expr, var, SCALE_DEFAULT , debug)
 
                     if expr.get_result():
                         var[v] = expr.result
@@ -110,7 +111,7 @@ while 1:
 
                     t = time.time()
 
-                    expr = rp.Infix(cmd, var, debug)
+                    expr = rp.Infix(cmd, var, SCALE_DEFAULT, debug)
 
                     if expr.get_result():
                         e = time.time()
