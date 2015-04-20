@@ -7,20 +7,7 @@ This is how you use bcrpn :
 
 or even more complex :
 
-    a=-13.34536345;b=0.000324554;for 32;a=(2-(10*a)*-0.003)/-0.7495;b=(a*(b/0.8765)/0.01)
-    a
-    b
+    x=2;y=3;z=4;pi=3;for 10000;pi=pi+4/(x*y*z);x=x+2;y=y+2;z=z+2;pi=pi-4/(x*y*z);x=x+2;y=y+2;z=z+2
+    pi
 
-    is the python equivalence of :
-
-    45494895879875985797597595778957595797859785975987597597598759759579759579*99
-
-
-
-    a=-13.34536345
-    b=0.000324554
-
-    for x in range(32):
-        a=(10*a)*-0.003)/-0.7495
-        b=(a*(b/0.8765)/0.01)
-        print a+b
+will calculate pi with the "Nilakantha series"
