@@ -48,6 +48,7 @@ class Infix(object):
 
         self.scale = int(scale)
         self.form = '{:.'+str(self.scale)+'f}'
+        getcontext().prec=self.scale
 
         if debug:
             print "(input) ", infix_expr
@@ -89,35 +90,23 @@ class Infix(object):
 
 
     def __format_num(self, num):
-        return self.__right_clean(self.form.format(Decimal(num)))
+        return self.__right_clean(self.form.format(num))
 
 
     def __get_stuff(self, num, word):
         if num == '-' and word != '':
-            #self.token_list.append(float(-self.__get_word(word)))
             self.token_list.append(self.__format_num(-Decimal(self.__get_word(word))))
         elif (word and num) or num == '-' or num == '.':
             self.__error('(error) error in expression')
             return False
 
         elif num != '':
-            print 'num'
-            #self.token_list.append(float(num))
             self.token_list.append(self.__format_num(Decimal(num)))
 
         elif word != '':
             self.token_list.append(self.__get_word(word))
 
         return True
-
-
-
-
-
-    def set_scale(self, scale):
-        self.scale = scale
-        self.form = '{0:.' + str(scale) + 'f}'
-
 
     @staticmethod
     def is_assoc(o1, direction):
@@ -158,7 +147,6 @@ class Infix(object):
                 word = ''
 
                 if i < len(self.infix) - 1 or c == ')':
-                    print "bloop"
                     self.token_list.append(c)
                 else:
                     self.__error("(error) last char can't be an operator")
@@ -240,7 +228,8 @@ class Infix(object):
                     a = Decimal(stack.pop())
 
                     if t == '*':
-                        stack.append(Decimal(Decimal(a) * Decimal(b)))
+                        stack.append(a*b)
+
                     elif t == '/':
                         if not a or not b:
                             self.__error('(error)  division by zero!')
@@ -268,6 +257,7 @@ class Infix(object):
                     return False
 
             elif t in Infix.logic:
+                # TODO => fix when stack is not good length
                 a = stack.pop()
                 b = stack.pop()
                 if self.__is_int(a) and self.__is_int(b):
@@ -292,7 +282,7 @@ class Infix(object):
                     return False
 
             else:
-                stack.append(t)
+                stack.append(Decimal(t))
 
         self.result = self.__format_num(Decimal(stack[-1]))
 

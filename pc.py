@@ -12,7 +12,7 @@ ver = '1.0'
 commands = ( 'quit', 'debug', 'version', 'help', 'show' )
 
 debug = True
-SCALE_DEFAULT = 100000
+SCALE_DEFAULT = 10000
 
 def completer(text, state):
     options = [x for x in commands if x.startswith(text) and x != text]
