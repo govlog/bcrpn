@@ -9,31 +9,32 @@ import rpn as rp
 
 ver = '1.0'
 
-commands = ( 'quit' , 'debug' , 'version' , 'help' , 'show' )
+commands = ( 'quit', 'debug', 'version', 'help', 'show' )
 
-debug=True
+debug = True
+SCALE_DEFAULT = 10000
 
 def completer(text, state):
-    options = [x for x in commands if x.startswith(text) and x!=text]
+    options = [x for x in commands if x.startswith(text) and x != text]
     try:
         return options[state]
     except IndexError:
         return None
+
 
 readline.set_completer(completer)
 readline.parse_and_bind("tab: complete")
 
 
 def cmd_parse(command):
-    
     global debug
 
     if command == 'quit' or command == '!q':
         sys.exit(0)
 
     elif command == 'debug' or command == '!d':
-        debug=not debug
-        print "debug is now set to",debug
+        debug = not debug
+        print "debug is now set to", debug
 
     elif command == 'show':
         print var
@@ -45,63 +46,64 @@ def cmd_parse(command):
         print "version : show version number"
 
     elif command == 'version' or command == '!v':
-        print "calc version",ver
+        print "calc version", ver
 
-print "Welcome to calc",ver,"use help for command list or quit to exit."
 
-var={}
+print "Welcome to calc", ver, "use help for command list or quit to exit."
+print "Scale is set to",SCALE_DEFAULT
 
-#t=0
+var = {}
 
 while 1:
-    
+
     try:
         user_input = raw_input('> ')
     except KeyboardInterrupt:
-        user_input=''
+        user_input = ''
         print "(ctrl^c) => exit."
         sys.exit(0)
 
     if user_input:
 
-        cmd=''
+        cmd = ''
 
-        input_arr=list(user_input.rstrip(' ').lstrip(' '))
-        input_len=len(input_arr)
+        input_arr = list(user_input.rstrip(' ').lstrip(' '))
+        input_len = len(input_arr)
+        end = (input_len-1)
 
-        pos=0
+        pos = 0
 
-        loop=False
-        loop_iter=0
-        iter_num=0
+        loop = False
+        loop_pos = 0
+        loop_iter = 0
+        iter_num = 0
 
-        while (pos!=input_len):
+        while pos != input_len:
 
-            c=input_arr[pos]
+            c = input_arr[pos]
 
             if c != ';':
+                cmd += c
 
-                cmd+=c
+            if c == ';' or (pos == end):
 
-            if c == ';' or (pos==input_len-1):
-
-                if ('for' in cmd) and loop==False:
-                    (_tmp,iter_num)=cmd.split(' ')
-                    iter_num=int(iter_num)
-                    loop=True
-                    loop_pos=pos
-                    loop_iter=0
+                if ('for' in cmd) and (not loop):
+                    (_tmp, iter_num) = cmd.split(' ')
+                    iter_num = int(iter_num)
+                    loop = True
+                    loop_pos = pos
+                    loop_iter = 0
 
                 elif cmd in commands:
                     cmd_parse(cmd)
 
                 elif '=' in cmd:
 
-                    (v,expr)=cmd.split("=")
-                    expr=rp.Infix(expr,var,debug)
+                    (v, expr) = cmd.split("=")
+                    expr = rp.Infix(expr, var, SCALE_DEFAULT , debug)
 
                     if expr.get_result():
-                        var[v]=expr.result
+                        var[v] = expr.result
                         if debug:
                             print v, "<=", var[v]
 
@@ -109,28 +111,28 @@ while 1:
 
                     t = time.time()
 
-                    expr=rp.Infix(cmd,var,debug)
+                    expr = rp.Infix(cmd, var, SCALE_DEFAULT, debug)
 
                     if expr.get_result():
                         e = time.time()
 
                         if debug:
-                            print "(time)   "+ '{0:.11f}'.format(e - t)+ "s"
-                            print "(result)",expr.result
+                            print "(time)   " + '{0:.11f}'.format(e - t) + "s"
+                            print "(result)", expr.result
                         else:
                             print expr.result
                 cmd = ''
 
-            if loop == True:
+            if loop:
 
-                if pos == input_len - 1:
-                    pos=loop_pos
+                if pos == end:
+                    pos = loop_pos
                     loop_iter += 1
-                    cmd=''
+                    cmd = ''
 
                 if loop_iter >= iter_num:
                     break
 
-            pos+=1
+            pos += 1
 
 print

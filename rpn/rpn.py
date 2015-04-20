@@ -1,7 +1,7 @@
 # -*- coding: UTF-8
 
 import math
-
+from decimal import getcontext,Decimal
 
 class Infix(object):
     """Class to convert from INFIX notation to RPN notation with a RPN parser
@@ -19,7 +19,8 @@ class Infix(object):
                 '-': (1, LEFT_ASSOC),
                 ')': (0, OTHER),
                 '(': (0, OTHER),
-                '&': (0, OTHER)}
+                '&': (0, OTHER),
+                '|': (0, OTHER)}
 
     valid_ops = {'+', '-', '/', '*', '%', '^', '&', '|', '!'}
 
@@ -32,7 +33,9 @@ class Infix(object):
             'cos': (5, LEFT_ASSOC),
             'acos': (5, LEFT_ASSOC)}
 
-    def __init__(self, infix_expr, variables, debug=False):
+    def __init__(self, infix_expr, variables=None, scale=10, debug=False):
+        if not variables:
+            variables = {}
         __sanitize = infix_expr.strip(' \t\n\r').replace(' ', '')
 
         self.infix = list(__sanitize)
@@ -42,8 +45,10 @@ class Infix(object):
         else:
             self.variables = {}
 
-        self.scale = 9
-        self.form = ''
+
+        self.scale = int(scale)
+        self.form = '{:.'+str(self.scale)+'f}'
+        getcontext().prec=self.scale
 
         if debug:
             print "(input) ", infix_expr
@@ -55,59 +60,53 @@ class Infix(object):
         self.token_list = []
         self.rpn = []
         self.result = 0
-        self.set_scale(self.scale)
-
 
     def __debug(self, msg):
         if self.debug:
             print msg
 
-
     @staticmethod
     def __error(msg):
         print msg
-
-    def __format_num(self, num):
-        return self.form.format(num).rstrip('0').rstrip('.')
-
 
     def __get_word(self, word):
         if word in Infix.func:
             return word
         elif word in self.variables:
-            return float(self.variables[word])
+            return self.__format_num(Decimal(self.variables[word]))
         else:
             self.__error("(warn)   unknown func/var '" + word + "'")
             return 0
 
     @staticmethod
-    def __is_int(i):
-        if '.' not in str(i).rstrip('0').rstrip('.'):
+    def __right_clean(n):
+        return str(n).rstrip('0').rstrip('.')
+
+    def __is_int(self,i):
+        if '.' not in self.__right_clean(i):
             return True
         else:
             return False
 
 
+    def __format_num(self, num):
+        return self.__right_clean(self.form.format(num))
+
+
     def __get_stuff(self, num, word):
         if num == '-' and word != '':
-            self.token_list.append(float(-self.__get_word(word)))
+            self.token_list.append(self.__format_num(-Decimal(self.__get_word(word))))
         elif (word and num) or num == '-' or num == '.':
             self.__error('(error) error in expression')
             return False
 
         elif num != '':
-            self.token_list.append(float(num))
+            self.token_list.append(self.__format_num(Decimal(num)))
 
         elif word != '':
             self.token_list.append(self.__get_word(word))
 
         return True
-
-
-    def set_scale(self, scale):
-        self.scale = scale
-        self.form = '{0:.' + str(scale) + 'f}'
-
 
     @staticmethod
     def is_assoc(o1, direction):
@@ -225,11 +224,12 @@ class Infix(object):
             if t in Infix.valid_ops and t not in Infix.logic:
                 if len(stack) >= 2:
 
-                    b = float(stack.pop())
-                    a = float(stack.pop())
+                    b = Decimal(stack.pop())
+                    a = Decimal(stack.pop())
 
                     if t == '*':
-                        stack.append(a * b)
+                        stack.append(a*b)
+
                     elif t == '/':
                         if not a or not b:
                             self.__error('(error)  division by zero!')
@@ -257,6 +257,7 @@ class Infix(object):
                     return False
 
             elif t in Infix.logic:
+                # TODO => fix when stack is not good length
                 a = stack.pop()
                 b = stack.pop()
                 if self.__is_int(a) and self.__is_int(b):
@@ -264,10 +265,8 @@ class Infix(object):
                     b = int(b)
                     if t == '&':
                         stack.append(a & b)
-                    if t == '|':
+                    elif t == '|':
                         stack.append(a | b)
-                    # if t == '!':
-                    #                        stack.append(a ! b)
                 else:
                     self.__debug('(error) must use integer for bitwise')
                     return False
@@ -283,9 +282,9 @@ class Infix(object):
                     return False
 
             else:
-                stack.append(t)
+                stack.append(Decimal(t))
 
-        self.result = self.__format_num(stack[-1])
+        self.result = self.__format_num(Decimal(stack[-1]))
 
         return True
 
