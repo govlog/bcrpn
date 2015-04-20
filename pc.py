@@ -7,12 +7,12 @@ import time
 import readline
 import rpn as rp
 
-ver = '1.0'
+ver = '1.3.0-current'
 
 commands = ( 'quit', 'debug', 'version', 'help', 'show' )
 
-debug = True
-SCALE_DEFAULT = 10000
+debug = False
+SCALE_DEFAULT = 150
 
 def completer(text, state):
     options = [x for x in commands if x.startswith(text) and x != text]
