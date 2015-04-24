@@ -7,12 +7,12 @@ import time
 import readline
 import rpn as rp
 
-ver = '1.0'
+ver = '1.3.0-current'
 
-commands = ( 'quit', 'debug', 'version', 'help', 'show' )
+commands = ( 'quit', 'debug', 'version', 'help', 'show','precision' )
 
-debug = True
-SCALE_DEFAULT = 10000
+debug = False
+SCALE_DEFAULT = 1000
 
 def completer(text, state):
     options = [x for x in commands if x.startswith(text) and x != text]
@@ -40,17 +40,18 @@ def cmd_parse(command):
         print var
 
     elif command == 'help' or command == '!h':
-        print "debug   : toggle debug on/off"
-        print "show    : show variables"
-        print "quit    : exit calc"
-        print "version : show version number"
+        print "debug     : toggle debug on/off"
+        print "show      : show variables"
+        print "quit      : exit calc"
+        print "version   : show version number"
+        print "precision : set the number precision"
 
     elif command == 'version' or command == '!v':
         print "calc version", ver
 
 
-print "Welcome to calc", ver, "use help for command list or quit to exit."
-print "Scale is set to",SCALE_DEFAULT
+print "Welcome to calc-", ver, ", use help for command list or quit to exit."
+print "Precision is set to",SCALE_DEFAULT
 
 var = {}
 
@@ -100,12 +101,19 @@ while 1:
                 elif '=' in cmd:
 
                     (v, expr) = cmd.split("=")
-                    expr = rp.Infix(expr, var, SCALE_DEFAULT , debug)
 
-                    if expr.get_result():
-                        var[v] = expr.result
-                        if debug:
-                            print v, "<=", var[v]
+                    if v == 'precision':
+                        print "Setting precision to",expr
+                        SCALE_DEFAULT=expr
+
+                    else:
+
+                        expr = rp.Infix(expr, var, SCALE_DEFAULT , debug)
+
+                        if expr.get_result():
+                            var[v] = expr.result
+                            if debug:
+                                print v, "<=", var[v]
 
                 elif cmd != '':
 
