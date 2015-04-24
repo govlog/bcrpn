@@ -10,4 +10,4 @@ or even more complex :
     x=2;y=3;z=4;pi=3;for 10000;pi=pi+4/(x*y*z);x=x+2;y=y+2;z=z+2;pi=pi-4/(x*y*z);x=x+2;y=y+2;z=z+2
     pi
 
-will calculate pi with the "Nilakantha series"
+will calculate pi with the "Nilakantha series" :-)
