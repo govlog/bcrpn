@@ -34,8 +34,7 @@ class Infix(object):
             'acos': (5, LEFT_ASSOC)}
 
     def __init__(self, infix_expr, variables=None, scale=10, debug=False):
-        if not variables:
-            variables = {}
+
         __sanitize = infix_expr.strip(' \t\n\r').replace(' ', '')
 
         self.infix = list(__sanitize)
@@ -44,7 +43,6 @@ class Infix(object):
             self.variables = variables
         else:
             self.variables = {}
-
 
         self.scale = int(scale)
         self.form = '{:.'+str(self.scale)+'f}'
