@@ -7,7 +7,7 @@ import time
 import readline
 import rpn as rp
 
-ver = '1.3.0-current'
+ver = '1.3.1-current'
 
 commands = ( 'quit', 'debug', 'version', 'help', 'show','precision' )
 
